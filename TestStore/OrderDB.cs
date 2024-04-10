@@ -14,17 +14,16 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string Customer, int Status, DateTime Date)
+        public int Create(int customer, int status, DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var customer = new CustomerBD().SearchByName(Customer);
+            {                
                 if (customer != null)
                 {
                     return db.GetTable<Order>()
-                        .Value(p => p.CustomerId, customer.Id)
-                        .Value(p => p.Status, Status)
-                        .Value(p => p.Date, Date)
+                        .Value(p => p.CustomerId, customer)
+                        .Value(p => p.Status, status)
+                        .Value(p => p.Date, date)
                         .Insert();
                 }
                 else
@@ -42,58 +41,57 @@ namespace TestStore
             }
         }
 
-        public Order? SearchById(int Id)
+        public Order? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Order>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<Order>? SearchBySubCustomer(string Customer)
+        public List<Order>? SearchByCustomer(string customer)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Order>().LoadWith(request => request.customer)
-                    .Where(p => p.customer.Name == Customer)
+                    .Where(p => p.customer.Name == customer)
                     .ToList();
             }
         }
 
-        public List<Order>? SearchByStatus(int Status)
+        public List<Order>? SearchByStatus(int status)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Order>()
-                    .Where(p => p.Status == Status)
+                    .Where(p => p.Status == status)
                     .ToList();
             }
         }
 
-        public List<Order>? SearchByTotalDate(DateTime Date)
+        public List<Order>? SearchByDate(DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Order>()
-                    .Where(p => p.Date == Date)
+                    .Where(p => p.Date == date)
                     .ToList();
             }
         }
 
-        public int UpdateOrder(int Id, string Customer, int Status, DateTime Date)
+        public int UpdateOrder(int id, int customer, int status, DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var customer = new CustomerBD().SearchByName(Customer);
+            {                
                 if (customer != null)
                 {
                     return db.GetTable<Order>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.CustomerId, customer.Id)
-                        .Set(p => p.Status, Status)
-                        .Set(p => p.Date, Date)
+                        .Where(p => p.Id == id)
+                        .Set(p => p.CustomerId, customer)
+                        .Set(p => p.Status, status)
+                        .Set(p => p.Date, date)
                         .Update();
                 }
                 else
@@ -103,12 +101,12 @@ namespace TestStore
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Order>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

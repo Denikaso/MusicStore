@@ -10,14 +10,14 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string Name, string Email, string PhoneNumber)
+        public int Create(string name, string email, string phoneNumber)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supplier>()
-                    .Value(s => s.Name, Name)
-                    .Value(s => s.Email, Email)
-                    .Value(s => s.PhoneNumber, PhoneNumber)
+                    .Value(s => s.Name, name)
+                    .Value(s => s.Email, email)
+                    .Value(s => s.PhoneNumber, phoneNumber)
                     .Insert();
             }
         }
@@ -30,64 +30,64 @@ namespace TestStore
             }
         }
 
-        public Supplier SearchById(int Id)
+        public Supplier? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supplier>()
-                    .Where(s => s.Id == Id)
+                    .Where(s => s.Id == id)
                     .FirstOrDefault();
             }
         }
-        public Supplier SearchByName(string Name)
+        public Supplier? SearchByName(string name)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supplier>()
-                    .Where(c => c.Name == Name)
-                    .FirstOrDefault();
-            }
-        }
-
-        public Supplier SearchByEmail(string Email)
-        {
-            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                return db.GetTable<Supplier>()
-                    .Where(c => c.Email == Email)
+                    .Where(c => c.Name == name)
                     .FirstOrDefault();
             }
         }
 
-        public Supplier SearchByPhoneNumber(string PhoneNumber)
+        public Supplier? SearchByEmail(string email)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supplier>()
-                    .Where(c => c.PhoneNumber == PhoneNumber)
+                    .Where(c => c.Email == email)
                     .FirstOrDefault();
             }
         }
 
-        public int UpdateSupplier(int Id, string Name, string Email, string PhoneNumber)
+        public Supplier? SearchByPhoneNumber(string phoneNumber)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supplier>()
-                    .Where(s => s.Id == Id)
-                    .Set(s => s.Name, Name)
-                    .Set(s => s.Email, Email)
-                    .Set(s => s.PhoneNumber, PhoneNumber)
+                    .Where(c => c.PhoneNumber == phoneNumber)
+                    .FirstOrDefault();
+            }
+        }
+
+        public int UpdateSupplier(int id, string name, string email, string phoneNumber)
+        {
+            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
+            {
+                return db.GetTable<Supplier>()
+                    .Where(s => s.Id == id)
+                    .Set(s => s.Name, name)
+                    .Set(s => s.Email, email)
+                    .Set(s => s.PhoneNumber, phoneNumber)
                     .Update();
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supplier>()
-                    .Where(s => s.Id == Id)
+                    .Where(s => s.Id == id)
                     .Delete();
             }
         }

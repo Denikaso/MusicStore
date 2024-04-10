@@ -13,18 +13,16 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int Order, string Product, double Quantity)
+        public int Create(int order, int product, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                var order = new OrderDB().SearchById(Order);
-                var product = new ProductDB().SearchByTitle(Product);
                 if (order != null && product != null)
                 {
                     return db.GetTable<OrderItem>()
-                        .Value(p => p.OrderId, Order)
-                        .Value(p => p.ProductId, product.Id)
-                        .Value(p => p.Quantity, Quantity)
+                        .Value(p => p.OrderId, order)
+                        .Value(p => p.ProductId, product)
+                        .Value(p => p.Quantity, quantity)
                         .Insert();
                 }
                 else
@@ -45,49 +43,47 @@ namespace TestStore
             }
         }
 
-        public OrderItem? SearchById(int Id)
+        public OrderItem? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<OrderItem>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<OrderItem>? SearchByOrder(int Order)
+        public List<OrderItem>? SearchByOrder(int order)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<OrderItem>()
-                    .Where(p => p.OrderId == Order)
+                    .Where(p => p.OrderId == order)
                     .ToList();
             }
         }
 
-        public List<OrderItem>? SearchByProduct(string Product)
+        public List<OrderItem>? SearchByProduct(string product)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<OrderItem>().LoadWith(request => request.product)
-                    .Where(p => p.product.Title == Product)
+                    .Where(p => p.product.Title == product)
                     .ToList();
             }
         }
 
-        public int UpdateOrderItem(int Id, int Order, string Product, double Quantity)
+        public int UpdateOrderItem(int id, int order, int product, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var order = new OrderDB().SearchById(Order);
-                var product = new ProductDB().SearchByTitle(Product);
+            {                
                 if (order != null && product != null)
                 {
                     return db.GetTable<OrderItem>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.OrderId, Order)
-                        .Set(p => p.ProductId, product.Id)
-                        .Set(p => p.Quantity, Quantity)
+                        .Where(p => p.Id == id)
+                        .Set(p => p.OrderId, order)
+                        .Set(p => p.ProductId, product)
+                        .Set(p => p.Quantity, quantity)
                         .Update();
                 }
                 else
@@ -97,12 +93,12 @@ namespace TestStore
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<OrderItem>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

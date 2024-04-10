@@ -15,13 +15,13 @@ namespace TestStore
     public class SectionBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
-        public int Create(string Title)
+        public int Create(string title)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                if (SearchByTitle(Title) != null)
+                if (SearchByTitle(title) != null)
                     return db.GetTable<Section>()
-                        .Value(p => p.Title, Title)
+                        .Value(p => p.Title, title)
                         .Insert();
                 else
                     return -1;
@@ -35,43 +35,43 @@ namespace TestStore
             }
         }
 
-        public Section? SearchById(int Id)
+        public Section? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Section>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public Section? SearchByTitle(string Title)
+        public Section? SearchByTitle(string title)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Section>()
-                    .Where(p => p.Title == Title)
+                    .Where(p => p.Title == title)
                     .FirstOrDefault();
             }
         }
 
-        public int UpdateSection(int Id, string Title)
+        public int UpdateSection(int id, string title)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Section>()
-                    .Where(c => c.Id == Id)
-                    .Set(c => c.Title, Title)
+                    .Where(c => c.Id == id)
+                    .Set(c => c.Title, title)
                     .Update();
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Section>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

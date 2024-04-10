@@ -12,20 +12,17 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string Customer, string Product, int Rating, string Text)
+        public int Create(int customer, int product, int rating, string text)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var customer = new CustomerBD().SearchByName(Customer);
-                var product = new ProductDB().SearchByTitle(Product);
-
+            {                
                 if (customer != null && product != null)
                 {
                     return db.GetTable<Review>()
-                        .Value(r => r.CustomerId, customer.Id)
-                        .Value(r => r.ProductId, product.Id)
-                        .Value(r => r.Rating, Rating)
-                        .Value(r => r.Text, Text)
+                        .Value(r => r.CustomerId, customer)
+                        .Value(r => r.ProductId, product)
+                        .Value(r => r.Rating, rating)
+                        .Value(r => r.Text, text)
                         .Value(r => r.Date, DateTime.Now) 
                         .Insert();
                 }
@@ -47,61 +44,58 @@ namespace TestStore
             }
         }
 
-        public Review? SearchById(int Id)
+        public Review? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Review>()
-                    .Where(r => r.Id == Id)
+                    .Where(r => r.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<Review>? SearchByCustomer(string Customer)
+        public List<Review>? SearchByCustomer(int customer)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Review>().LoadWith(request => request.customer)
-                    .Where(p => p.customer.Name == Customer)
+                    .Where(p => p.customer.Id == customer)
                     .ToList();
             }
         }
 
-        public List<Review>? SearchByProduct(string Product)
+        public List<Review>? SearchByProduct(int product)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Review>().LoadWith(request => request.product)
-                    .Where(p => p.product.Title == Product)
+                    .Where(p => p.product.Id == product)
                     .ToList();
             }
         }
 
-        public List<Review>? SearchByRating(int Rating)
+        public List<Review>? SearchByRating(int rating)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Review>()
-                    .Where(r => r.Rating == Rating)
+                    .Where(r => r.Rating == rating)
                     .ToList();
             }
         }
 
-        public int UpdateReview(int Id, string Customer, string Product, int Rating, string Text)
+        public int UpdateReview(int id, int customer, int product, int rating, string text)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var customer = new CustomerBD().SearchByName(Customer);
-                var product = new ProductDB().SearchByTitle(Product);
-
+            {                
                 if (customer != null && product != null)
                 {
                     return db.GetTable<Review>()
-                        .Where(p => p.Id == Id)
-                        .Set(r => r.CustomerId, customer.Id)
-                        .Set(r => r.ProductId, product.Id)
-                        .Set(r => r.Rating, Rating)
-                        .Set(r => r.Text, Text)
+                        .Where(p => p.Id == id)
+                        .Set(r => r.CustomerId, customer)
+                        .Set(r => r.ProductId, product)
+                        .Set(r => r.Rating, rating)
+                        .Set(r => r.Text, text)
                         .Set(r => r.Date, DateTime.Now)
                         .Update();
                 }

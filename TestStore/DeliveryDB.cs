@@ -15,19 +15,18 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int Order, DateTime DeliveryDate, string Address, bool Status, double Price)
+        public int Create(int order, DateTime deliveryDate, string address, bool status, double price)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var order = new OrderDB().SearchById(Order);                
+            {                               
                 if (order != null)
                 {
                     return db.GetTable<Delivery>()
-                        .Value(p => p.OrderId, Order)
-                        .Value(p => p.DeliveryDate, DeliveryDate)
-                        .Value(p => p.Address, Address)
-                        .Value(p => p.Status, Status)
-                        .Value(p => p.Price, Price)
+                        .Value(p => p.OrderId, order)
+                        .Value(p => p.DeliveryDate, deliveryDate)
+                        .Value(p => p.Address, address)
+                        .Value(p => p.Status, status)
+                        .Value(p => p.Price, price)
                         .Insert();
                 }
                 else
@@ -47,79 +46,78 @@ namespace TestStore
             }
         }
 
-        public Delivery? SearchById(int Id)
+        public Delivery? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<Delivery>? SearchByOrder(int Order)
+        public List<Delivery>? SearchByOrder(int order)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(p => p.OrderId == Order)
+                    .Where(p => p.OrderId == order)
                     .ToList();
             }
         }
 
-        public List<Delivery>? SearchByDeliveryDate(DateTime Date)
+        public List<Delivery>? SearchByDeliveryDate(DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(p => p.DeliveryDate == Date)
+                    .Where(p => p.DeliveryDate == date)
                     .ToList();
             }
         }
 
-        public List<Delivery>? SearchByAddress(string Address)
+        public List<Delivery>? SearchByAddress(string address)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(p => p.Address == Address)
+                    .Where(p => p.Address == address)
                     .ToList();
             }
         }
 
-        public List<Delivery>? SearchByStatus(bool Status)
+        public List<Delivery>? SearchByStatus(bool status)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(p => p.Status == Status)
+                    .Where(p => p.Status == status)
                     .ToList();
             }
         }
-        public List<Delivery>? SearchByPrice(double Price)
+        public List<Delivery>? SearchByPrice(double price)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(p => p.Price == Price)
+                    .Where(p => p.Price == price)
                     .ToList();
             }
         }
 
-        public int UpdateDelivey(int Id, int Order, DateTime DeliveryDate, string Address, bool Status, double Price)
+        public int UpdateDelivey(int id, int order, DateTime deliveryDate, string address, bool status, double price)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var order = new OrderDB().SearchById(Order);
+            {                
                 if (order != null)
                 {
                     return db.GetTable<Delivery>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.OrderId, Order)
-                        .Set(p => p.DeliveryDate, DeliveryDate)
-                        .Set(p => p.Address, Address)
-                        .Set(p => p.Status, Status)
-                        .Set(p => p.Price, Price)
+                        .Where(p => p.Id == id)
+                        .Set(p => p.OrderId, order)
+                        .Set(p => p.DeliveryDate, deliveryDate)
+                        .Set(p => p.Address, address)
+                        .Set(p => p.Status, status)
+                        .Set(p => p.Price, price)
                         .Update();
                 }
                 else
@@ -129,12 +127,12 @@ namespace TestStore
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Delivery>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

@@ -13,17 +13,16 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string Customer, bool Status, double TotalPrice)
+        public int Create(int customer, bool status, double totalPrice)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var customer = new CustomerBD().SearchByName(Customer);
-                if (customer != null)
+            {                
+                if (SearchByCustomer(customer) == null)
                 {
                     return db.GetTable<Cart>()
-                        .Value(p => p.CustomerId, customer.Id)
-                        .Value(p => p.Status, Status)
-                        .Value(p => p.TotalPrice, TotalPrice)
+                        .Value(p => p.CustomerId, customer)
+                        .Value(p => p.Status, status)
+                        .Value(p => p.TotalPrice, totalPrice)
                         .Insert();
                 }
                 else
@@ -41,58 +40,57 @@ namespace TestStore
             }
         }
 
-        public Cart? SearchById(int Id)
+        public Cart? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Cart>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public Cart? SearchBySubCustomer(string Customer)
+        public Cart? SearchByCustomer(int customer)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Cart>().LoadWith(request => request.customer)
-                    .Where(p => p.customer.Name == Customer)
+                    .Where(p => p.customer.Id == customer)
                     .FirstOrDefault();
             }
         }
 
-        public List<Cart>? SearchByStatus(bool Status)
+        public List<Cart>? SearchByStatus(bool status)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Cart>()
-                    .Where(p => p.Status == Status)
+                    .Where(p => p.Status == status)
                     .ToList();
             }
         }
 
-        public List<Cart>? SearchByTotalPrice(double TotalPrice)
+        public List<Cart>? SearchByTotalPrice(double totalPrice)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Cart>()
-                    .Where(p => p.TotalPrice == TotalPrice)
+                    .Where(p => p.TotalPrice == totalPrice)
                     .ToList();
             }
         }        
 
-        public int UpdateCart(int Id, string Customer, bool Status, double TotalPrice)
+        public int UpdateCart(int id, int customer, bool status, double totalPrice)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var customer = new CustomerBD().SearchByName(Customer);
+            {                
                 if (customer != null)
                 {
                     return db.GetTable<Cart>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.CustomerId, customer.Id)
-                        .Set(p => p.Status, Status)
-                        .Set(p => p.TotalPrice, TotalPrice)
+                        .Where(p => p.Id == id)
+                        .Set(p => p.CustomerId, customer)
+                        .Set(p => p.Status, status)
+                        .Set(p => p.TotalPrice, totalPrice)
                         .Update();
                 }
                 else
@@ -102,12 +100,12 @@ namespace TestStore
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Cart>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

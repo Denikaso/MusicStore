@@ -13,18 +13,16 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int Cart, string Product, double Quantity)
+        public int Create(int cart, int product, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var cart = new CartDB().SearchById(Cart);
-                var product = new ProductDB().SearchByTitle(Product);
+            {                                
                 if (cart != null && product != null)
                 {
                     return db.GetTable<CartItem>()
-                        .Value(p => p.CartId, Cart)
-                        .Value(p => p.ProductId, product.Id)
-                        .Value(p => p.Quantity, Quantity)
+                        .Value(p => p.CartId, cart)
+                        .Value(p => p.ProductId, product)
+                        .Value(p => p.Quantity, quantity)
                         .Insert();
                 }
                 else
@@ -45,49 +43,47 @@ namespace TestStore
             }
         }
 
-        public CartItem? SearchById(int Id)
+        public CartItem? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<CartItem>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<CartItem>? SearchByCart(int Cart)
+        public List<CartItem>? SearchByCart(int cart)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<CartItem>()
-                    .Where(p => p.CartId == Cart)
+                    .Where(p => p.CartId == cart)
                     .ToList();
             }
         }
 
-        public List<CartItem>? SearchByProduct(string Product)
+        public List<CartItem>? SearchByProduct(int product)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<CartItem>().LoadWith(request => request.product)
-                    .Where(p => p.product.Title == Product)
+                    .Where(p => p.product.Id == product)
                     .ToList();
             }
         }
 
-        public int UpdateCartItem(int Id, int Cart, string Product, double Quantity)
+        public int UpdateCartItem(int id, int cart, int product, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                var cart = new CartDB().SearchById(Cart);
-                var product = new ProductDB().SearchByTitle(Product);
                 if (cart != null && product != null)
                 {
                     return db.GetTable<CartItem>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.CartId, Cart)
-                        .Set(p => p.ProductId, product.Id)
-                        .Set(p => p.Quantity, Quantity)
+                        .Where(p => p.Id == id)
+                        .Set(p => p.CartId, cart)
+                        .Set(p => p.ProductId, product)
+                        .Set(p => p.Quantity, quantity)
                         .Update();
                 }
                 else
@@ -97,12 +93,12 @@ namespace TestStore
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<CartItem>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

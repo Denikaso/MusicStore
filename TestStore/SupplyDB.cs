@@ -13,19 +13,17 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string Supplier, string Product, double PricePerUnit, int Quantity, DateTime Date)
+        public int Create(int supplier, int product, double pricePerUnit, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                var supplier = new SupplierBD().SearchByName(Supplier);
-                var product = new ProductDB().SearchByTitle(Product);
                 if (supplier != null && product != null)
                 {
                     return db.GetTable<Supply>()
-                        .Value(r => r.SupplierId, supplier.Id)
-                        .Value(r => r.ProductId, product.Id)
-                        .Value(r => r.PricePerUnit, PricePerUnit)
-                        .Value(r => r.Quantity, Quantity)
+                        .Value(r => r.SupplierId, supplier)
+                        .Value(r => r.ProductId, product)
+                        .Value(r => r.PricePerUnit, pricePerUnit)
+                        .Value(r => r.Quantity, quantity)
                         .Value(r => r.Date, DateTime.Now)
                         .Insert();
                 }
@@ -47,79 +45,77 @@ namespace TestStore
             }
         }
 
-        public Supply? SearchById(int Id)
+        public Supply? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supply>()
-                    .Where(r => r.Id == Id)
+                    .Where(r => r.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<Supply>? SearchBySupplier(string Supplier)
+        public List<Supply>? SearchBySupplier(int supplier)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supply>().LoadWith(request => request.supplier)
-                    .Where(p => p.supplier.Name == Supplier)
+                    .Where(p => p.supplier.Id == supplier)
                     .ToList();
             }
         }
 
-        public List<Supply>? SearchByProduct(string Product)
+        public List<Supply>? SearchByProduct(int product)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supply>().LoadWith(request => request.product)
-                    .Where(p => p.product.Title == Product)
+                    .Where(p => p.product.Id == product)
                     .ToList();
             }
         }
 
-        public List<Supply>? SearchByPricePerUnit(double PricePerUnit)
+        public List<Supply>? SearchByPricePerUnit(double pricePerUnit)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supply>()
-                    .Where(r => r.PricePerUnit == PricePerUnit)
+                    .Where(r => r.PricePerUnit == pricePerUnit)
                     .ToList();
             }
         }
-        public List<Supply>? SearchByQuantity(int Quantity)
+        public List<Supply>? SearchByQuantity(int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Supply>()
-                    .Where(r => r.Quantity == Quantity)
-                    .ToList();
-            }
-        }
-
-        public List<Supply>? SearchByDate(DateTime Date)
-        {
-            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                return db.GetTable<Supply>()
-                    .Where(r => r.Date == Date)
+                    .Where(r => r.Quantity == quantity)
                     .ToList();
             }
         }
 
-        public int UpdateSupply(int Id, string Supplier, string Product, double PricePerUnit, int Quantity, DateTime Date)
+        public List<Supply>? SearchByDate(DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                var supplier = new SupplierBD().SearchByName(Supplier);
-                var product = new ProductDB().SearchByTitle(Product);
+                return db.GetTable<Supply>()
+                    .Where(r => r.Date == date)
+                    .ToList();
+            }
+        }
+
+        public int UpdateSupply(int id, int supplier, int product, double pricePerUnit, int quantity)
+        {
+            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
+            {               
                 if (supplier != null && product != null)
                 {
                     return db.GetTable<Supply>()
-                        .Where(s => s.Id == Id)
-                        .Set(r => r.SupplierId, supplier.Id)
-                        .Set(r => r.ProductId, product.Id)
-                        .Set(r => r.PricePerUnit, PricePerUnit)
-                        .Set(r => r.Quantity, Quantity)
+                        .Where(s => s.Id == id)
+                        .Set(r => r.SupplierId, supplier)
+                        .Set(r => r.ProductId, product)
+                        .Set(r => r.PricePerUnit, pricePerUnit)
+                        .Set(r => r.Quantity, quantity)
                         .Set(r => r.Date, DateTime.Now)
                         .Update();
                 }

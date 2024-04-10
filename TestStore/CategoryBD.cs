@@ -15,15 +15,14 @@ namespace TestStore
     public class CategoryBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
-        public int Create(string Title, string sectionTitle)
+        public int Create(string title, int section)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var section = new SectionBD().SearchByTitle(sectionTitle);
-                if (section != null && SearchByTitle(Title) != null)
+            {                
+                if (section != null && SearchByTitle(title) != null)
                     return db.GetTable<Category>()
-                        .Value(p => p.Title, Title)
-                        .Value(p => p.SectionId, section.Id)
+                        .Value(p => p.Title, title)
+                        .Value(p => p.SectionId, section)
                         .Insert();
                 else
                     return -1;
@@ -37,57 +36,56 @@ namespace TestStore
             }
         }
 
-        public Category? SearchById(int Id)
+        public Category? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Category>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public Category? SearchByTitle(string Title)
+        public Category? SearchByTitle(string title)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Category>()
-                    .Where(p => p.Title == Title)
+                    .Where(p => p.Title == title)
                     .FirstOrDefault();
             }
         }
-        public Category? SearchBySection(string SectionTitle)
+        public Category? SearchBySection(int section)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Category>().LoadWith(request => request.Section)
-                    .Where(p => p.Section.Title == SectionTitle)
+                    .Where(p => p.Section.Id == section)
                     .FirstOrDefault();
             }
         }
 
-        public int UpdateCategory(int Id, string Title, string sectionTitle)
+        public int UpdateCategory(int id, string title, int section)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var section = new SectionBD().SearchByTitle(sectionTitle);
-                if (section != null && SearchById(Id) != null)
+            {                
+                if (section != null && SearchById(id) != null)
                     return db.GetTable<Category>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.Title, Title)
-                        .Set(p => p.SectionId, section.Id)
+                        .Where(p => p.Id == id)
+                        .Set(p => p.Title, title)
+                        .Set(p => p.SectionId, section)
                         .Update();
                 else
                     return -1;
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Category>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }

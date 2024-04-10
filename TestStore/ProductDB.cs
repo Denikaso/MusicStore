@@ -14,22 +14,21 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string subcategoryTitle, string Title, string Description, double Price, int UnitsInCart, int UnitsInStock, int Rating, string Picture)
+        public int Create(int subcategory, string title, string description, double price, int unitsInCart, int unitsInStock, int rating, string picture)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var subcategory = new CategoryBD().SearchByTitle(subcategoryTitle);
-                if (subcategory != null && SearchByTitle(Title) == null)
+            {                
+                if (subcategory != null && SearchByTitle(title) == null)
                 {
                     return db.GetTable<Product>()
-                        .Value(p => p.SubcategoryId, subcategory.Id)
-                        .Value(p => p.Title, Title)
-                        .Value(p => p.Description, Description)
-                        .Value(p => p.Price, Price)
-                        .Value(p => p.UnitsInCart, UnitsInCart)
-                        .Value(p => p.UnitsInStock, UnitsInStock)
-                        .Value(p => p.Rating, Rating)
-                        .Value(p => p.Picture, Picture)
+                        .Value(p => p.SubcategoryId, subcategory)
+                        .Value(p => p.Title, title)
+                        .Value(p => p.Description, description)
+                        .Value(p => p.Price, price)
+                        .Value(p => p.UnitsInCart, unitsInCart)
+                        .Value(p => p.UnitsInStock, unitsInStock)
+                        .Value(p => p.Rating, rating)
+                        .Value(p => p.Picture, picture)
                         .Insert();
                 }
                 else
@@ -47,113 +46,112 @@ namespace TestStore
             }
         }
 
-        public Product? SearchById(int Id)
+        public Product? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.Id == Id)
+                    .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchBySubCategory(string SubCategoryTitle)
+        public Product? SearchBySubCategory(int subCategory)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>().LoadWith(request => request.subcategory)
-                    .Where(p => p.subcategory.Title == SubCategoryTitle)
+                    .Where(p => p.subcategory.Id == subCategory)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByTitle(string Title)
+        public Product? SearchByTitle(string title)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.Title == Title)
+                    .Where(p => p.Title == title)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByDescription(string Description)
+        public Product? SearchByDescription(string description)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.Description == Description)
+                    .Where(p => p.Description == description)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByPrice(double Price)
+        public Product? SearchByPrice(double price)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.Price == Price)
+                    .Where(p => p.Price == price)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByUnitsInCart(int UnitsInCart)
+        public Product? SearchByUnitsInCart(int unitsInCart)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.UnitsInCart == UnitsInCart)
+                    .Where(p => p.UnitsInCart == unitsInCart)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByUnitsInStock(int UnitsInStock)
+        public Product? SearchByUnitsInStock(int unitsInStock)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.UnitsInStock == UnitsInStock)
+                    .Where(p => p.UnitsInStock == unitsInStock)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByRating(int Rating)
+        public Product? SearchByRating(int rating)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.Rating == Rating)
+                    .Where(p => p.Rating == rating)
                     .FirstOrDefault();
             }
         }
 
-        public Product? SearchByPicture(string Picture)
+        public Product? SearchByPicture(string picture)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(p => p.Picture == Picture)
+                    .Where(p => p.Picture == picture)
                     .FirstOrDefault();
             }
         }
 
-        public int UpdateProduct(int Id, string subcategoryTitle, string Title, string Description, double Price, int UnitsInCart, int UnitsInStock, int Rating, string Picture)
+        public int UpdateProduct(int id, int subcategory, string title, string description, double price, int unitsInCart, int unitsInStock, int rating, string picture)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                var subcategory = new SubcategoryBD().SearchByTitle(subcategoryTitle);
-                if (subcategory != null && SearchById(Id) != null)
+            {                
+                if (subcategory != null && SearchById(id) != null)
                 {
                     return db.GetTable<Product>()
-                        .Where(p => p.Id == Id)
-                        .Set(p => p.SubcategoryId, subcategory.Id)
-                        .Set(p => p.Title, Title)
-                        .Set(p => p.Description, Description)
-                        .Set(p => p.Price, Price)
-                        .Set(p => p.UnitsInCart, UnitsInCart)
-                        .Set(p => p.UnitsInStock, UnitsInStock)
-                        .Set(p => p.Rating, Rating)
-                        .Set(p => p.Picture, Picture)                        
+                        .Where(p => p.Id == id)
+                        .Set(p => p.SubcategoryId, subcategory)
+                        .Set(p => p.Title, title)
+                        .Set(p => p.Description, description)
+                        .Set(p => p.Price, price)
+                        .Set(p => p.UnitsInCart, unitsInCart)
+                        .Set(p => p.UnitsInStock, unitsInStock)
+                        .Set(p => p.Rating, rating)
+                        .Set(p => p.Picture, picture)                        
                         .Update();
                 }
                 else
@@ -163,12 +161,12 @@ namespace TestStore
             }
         }
 
-        public int Delete(int Id)
+        public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>()
-                    .Where(c => c.Id == Id)
+                    .Where(c => c.Id == id)
                     .Delete();
             }
         }
