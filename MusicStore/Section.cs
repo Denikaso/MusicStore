@@ -1,6 +1,6 @@
 ﻿using LinqToDB.Mapping;
 
-namespace MusicStore
+namespace MusicStoreLibrary
 {
     [Table("Section")]
     public class Section

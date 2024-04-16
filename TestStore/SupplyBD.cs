@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TestStore
 {
-    internal class SupplyDB
+    public class SupplyBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 

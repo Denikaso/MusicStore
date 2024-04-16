@@ -1,5 +1,4 @@
 ﻿using LinqToDB.Mapping;
-using MusicStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,19 +15,19 @@ namespace MusicStoreLibrary
         [Column("SubcategoryId")]
         public int SubcategoryId { get; set; }        
         [Association(ThisKey = nameof(SubcategoryId), OtherKey = nameof(Subcategory.Id))]
-        public Subcategory subcategory { get; set; }
+        public Subcategory Subcategory { get; set; }
         [Column("Title"), NotNull]
         public string Title { get; set; }
         [Column("Description"), NotNull]
         public string Description { get; set; }
         [Column("Price")]
-        public float Price { get; set; }
-        [Column("UnitsInCarts")]
+        public double Price { get; set; }
+        [Column("UnitsInCart")]
         public int UnitsInCart { get; set; }
-        [Column("UnitsInStocks")]
+        [Column("UnitsInStock")]
         public int UnitsInStock { get; set; }
         [Column("Rating")]
-        public float Rating { get; set; }
+        public double Rating { get; set; }
         [Column("Picture"), NotNull]
         public string Picture { get; set; }
     }

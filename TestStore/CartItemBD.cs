@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace TestStore
 {
-    internal class OrderItemDB
+    public class CartItemBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int order, int product, int quantity)
+        public int Create(int cart, int product, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                if (order != null && product != null)
+            {                                
+                if (cart != null && product != null)
                 {
-                    return db.GetTable<OrderItem>()
-                        .Value(p => p.OrderId, order)
+                    return db.GetTable<CartItem>()
+                        .Value(p => p.CartId, cart)
                         .Value(p => p.ProductId, product)
                         .Value(p => p.Quantity, quantity)
                         .Insert();
@@ -32,56 +32,56 @@ namespace TestStore
             }
         }
 
-        public List<OrderItem> Read()
+        public List<CartItem> Read()
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<OrderItem>()
-                    .LoadWith(request => request.order)
+                return db.GetTable<CartItem>()
+                    .LoadWith(request => request.cart)
                     .LoadWith(request => request.product)
                     .ToList();
             }
         }
 
-        public OrderItem? SearchById(int id)
+        public CartItem? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<OrderItem>()
+                return db.GetTable<CartItem>()
                     .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<OrderItem>? SearchByOrder(int order)
+        public List<CartItem>? SearchByCart(int cart)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<OrderItem>()
-                    .Where(p => p.OrderId == order)
+                return db.GetTable<CartItem>()
+                    .Where(p => p.CartId == cart)
                     .ToList();
             }
         }
 
-        public List<OrderItem>? SearchByProduct(string product)
+        public List<CartItem>? SearchByProduct(int product)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<OrderItem>().LoadWith(request => request.product)
-                    .Where(p => p.product.Title == product)
+                return db.GetTable<CartItem>().LoadWith(request => request.product)
+                    .Where(p => p.product.Id == product)
                     .ToList();
             }
         }
 
-        public int UpdateOrderItem(int id, int order, int product, int quantity)
+        public int UpdateCartItem(int id, int cart, int product, int quantity)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {                
-                if (order != null && product != null)
+            {
+                if (cart != null && product != null)
                 {
-                    return db.GetTable<OrderItem>()
+                    return db.GetTable<CartItem>()
                         .Where(p => p.Id == id)
-                        .Set(p => p.OrderId, order)
+                        .Set(p => p.CartId, cart)
                         .Set(p => p.ProductId, product)
                         .Set(p => p.Quantity, quantity)
                         .Update();
@@ -97,7 +97,7 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<OrderItem>()
+                return db.GetTable<CartItem>()
                     .Where(c => c.Id == id)
                     .Delete();
             }

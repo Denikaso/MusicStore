@@ -6,23 +6,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static LinqToDB.Common.Configuration;
 
 namespace TestStore
 {
-    internal class CartItemDB
+    public class OrderBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int cart, int product, int quantity)
+        public int Create(int customer, int status, DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {                                
-                if (cart != null && product != null)
+            {                
+                if (customer != null)
                 {
-                    return db.GetTable<CartItem>()
-                        .Value(p => p.CartId, cart)
-                        .Value(p => p.ProductId, product)
-                        .Value(p => p.Quantity, quantity)
+                    return db.GetTable<Order>()
+                        .Value(p => p.CustomerId, customer)
+                        .Value(p => p.Status, status)
+                        .Value(p => p.Date, date)
                         .Insert();
                 }
                 else
@@ -32,58 +33,65 @@ namespace TestStore
             }
         }
 
-        public List<CartItem> Read()
+        public List<Order> Read()
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<CartItem>()
-                    .LoadWith(request => request.cart)
-                    .LoadWith(request => request.product)
-                    .ToList();
+                return db.GetTable<Order>().LoadWith(request => request.customer).ToList();
             }
         }
 
-        public CartItem? SearchById(int id)
+        public Order? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<CartItem>()
+                return db.GetTable<Order>()
                     .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<CartItem>? SearchByCart(int cart)
+        public List<Order>? SearchByCustomer(string customer)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<CartItem>()
-                    .Where(p => p.CartId == cart)
+                return db.GetTable<Order>().LoadWith(request => request.customer)
+                    .Where(p => p.customer.Name == customer)
                     .ToList();
             }
         }
 
-        public List<CartItem>? SearchByProduct(int product)
+        public List<Order>? SearchByStatus(int status)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<CartItem>().LoadWith(request => request.product)
-                    .Where(p => p.product.Id == product)
+                return db.GetTable<Order>()
+                    .Where(p => p.Status == status)
                     .ToList();
             }
         }
 
-        public int UpdateCartItem(int id, int cart, int product, int quantity)
+        public List<Order>? SearchByDate(DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                if (cart != null && product != null)
+                return db.GetTable<Order>()
+                    .Where(p => p.Date == date)
+                    .ToList();
+            }
+        }
+
+        public int UpdateOrder(int id, int customer, int status, DateTime date)
+        {
+            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
+            {                
+                if (customer != null)
                 {
-                    return db.GetTable<CartItem>()
+                    return db.GetTable<Order>()
                         .Where(p => p.Id == id)
-                        .Set(p => p.CartId, cart)
-                        .Set(p => p.ProductId, product)
-                        .Set(p => p.Quantity, quantity)
+                        .Set(p => p.CustomerId, customer)
+                        .Set(p => p.Status, status)
+                        .Set(p => p.Date, date)
                         .Update();
                 }
                 else
@@ -97,7 +105,7 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<CartItem>()
+                return db.GetTable<Order>()
                     .Where(c => c.Id == id)
                     .Delete();
             }

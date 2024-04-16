@@ -1,6 +1,5 @@
 ﻿using LinqToDB;
 using LinqToDB.DataProvider.SqlServer;
-using MusicStore;
 using MusicStoreLibrary;
 using System;
 using System.Collections.Generic;
@@ -10,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace TestStore
 {
-    internal class ProductDB
+    public class ProductBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int subcategory, string title, string description, double price, int unitsInCart, int unitsInStock, int rating, string picture)
+        public int Create(int subcategory, string title, string description, double price, int unitsInCart, int unitsInStock, double rating, string picture)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {                
@@ -42,7 +41,11 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Product>().LoadWith(request => request.subcategory).ToList();
+                return db.GetTable<Product>()
+                         .LoadWith(p => p.Subcategory)
+                         .ThenLoad(subcategory => subcategory.Category)
+                         .ThenLoad(category => category.Section)
+                         .ToList();
             }
         }
 
@@ -60,8 +63,8 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Product>().LoadWith(request => request.subcategory)
-                    .Where(p => p.subcategory.Id == subCategory)
+                return db.GetTable<Product>().LoadWith(request => request.Subcategory)
+                    .Where(p => p.Subcategory.Id == subCategory)
                     .FirstOrDefault();
             }
         }
@@ -116,7 +119,7 @@ namespace TestStore
             }
         }
 
-        public Product? SearchByRating(int rating)
+        public Product? SearchByRating(double rating)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
@@ -136,7 +139,7 @@ namespace TestStore
             }
         }
 
-        public int UpdateProduct(int id, int subcategory, string title, string description, double price, int unitsInCart, int unitsInStock, int rating, string picture)
+        public int UpdateProduct(int id, int subcategory, string title, string description, double price, int unitsInCart, int unitsInStock, double rating, string picture)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {                

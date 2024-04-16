@@ -10,6 +10,7 @@ namespace TestConsole
         {
             SectionBD sectionDB = new SectionBD();
             CategoryBD categoryBD = new CategoryBD();
+            ProductBD productBD = new ProductBD();
             // Тест метода Read
             Console.WriteLine("All Sections:");
             var sections = sectionDB.Read();
@@ -23,6 +24,13 @@ namespace TestConsole
             foreach (var category in categories)
             {
                 Console.WriteLine("ID: " + category.Id + " Title: " + category.Title + " Section: " + category.SectionId);
+            }
+
+            Console.WriteLine("All Products:");
+            var products = productBD.Read();
+            foreach (var product in products)
+            {
+                Console.WriteLine("ID: " + product.Id + " Title: " + product.Title + " Section: " + product.Description + product.Price + product.Picture + product.Rating + product.SubcategoryId);
             }
 
 

@@ -1,5 +1,4 @@
 ﻿using LinqToDB.Mapping;
-using MusicStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace MusicStoreLibrary
     [Table("Payment")]
     public class Payment
     {
-        [PrimaryKey, Identity] public int PaymentId { get; set; }
+        [PrimaryKey, Identity] public int Id { get; set; }
         [Column("OrderId"), NotNull] public int OrderId { get; set; }
         [Association(ThisKey = nameof(OrderId), OtherKey = nameof(Order.Id))]
         public Order order { get; set; }

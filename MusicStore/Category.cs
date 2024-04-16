@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MusicStore
+namespace MusicStoreLibrary
 {
     [Table("Category")]
     public class Category

@@ -3,30 +3,27 @@ using LinqToDB.DataProvider.SqlServer;
 using MusicStoreLibrary;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TestStore
 {
-    internal class DeliveryDB
+    public class PaymentDB
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(int order, DateTime deliveryDate, string address, bool status, double price)
+        public int Create(int order, double totalPrice, DateTime paymentDate, int paymentMethod)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {                               
-                if (order != null)
+            {                
+                if (SearchByOrder(order) == null)
                 {
-                    return db.GetTable<Delivery>()
+                    return db.GetTable<Payment>()
                         .Value(p => p.OrderId, order)
-                        .Value(p => p.DeliveryDate, deliveryDate)
-                        .Value(p => p.Address, address)
-                        .Value(p => p.Status, status)
-                        .Value(p => p.Price, price)
+                        .Value(p => p.TotalPrice, totalPrice)
+                        .Value(p => p.PaymentDate, paymentDate)
+                        .Value(p => p.PaymentMethod, paymentMethod)
                         .Insert();
                 }
                 else
@@ -36,88 +33,76 @@ namespace TestStore
             }
         }
 
-        public List<Delivery> Read()
+        public List<Payment> Read()
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Delivery>()
-                    .LoadWith(request => request.order)                    
-                    .ToList();
+                return db.GetTable<Payment>().LoadWith(request => request.customer).ToList();
             }
         }
 
-        public Delivery? SearchById(int id)
+        public Payment? SearchById(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Delivery>()
+                return db.GetTable<Payment>()
                     .Where(p => p.Id == id)
                     .FirstOrDefault();
             }
         }
 
-        public List<Delivery>? SearchByOrder(int order)
+        public Payment? SearchByOrder(int order)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Delivery>()
-                    .Where(p => p.OrderId == order)
+                return db.GetTable<Payment>().LoadWith(request => request.order)
+                    .Where(p => p.order.Id == order)
+                    .FirstOrDefault();
+            }
+        }
+
+        public List<Payment>? SearchByTotalPrice(double totalPrice)
+        {
+            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
+            {
+                return db.GetTable<Payment>()
+                    .Where(p => p.TotalPrice == totalPrice)
                     .ToList();
             }
         }
 
-        public List<Delivery>? SearchByDeliveryDate(DateTime date)
+        public List<Payment>? SearchByPaymentDate(DateTime date)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Delivery>()
-                    .Where(p => p.DeliveryDate == date)
+                return db.GetTable<Payment>()
+                    .Where(p => p.PaymentDate == date)
                     .ToList();
             }
         }
 
-        public List<Delivery>? SearchByAddress(string address)
+        public List<Payment>? SearchByPaymentMethod(int method)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Delivery>()
-                    .Where(p => p.Address == address)
+                return db.GetTable<Payment>()
+                    .Where(p => p.PaymentMethod == method)
                     .ToList();
             }
         }
 
-        public List<Delivery>? SearchByStatus(bool status)
-        {
-            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                return db.GetTable<Delivery>()
-                    .Where(p => p.Status == status)
-                    .ToList();
-            }
-        }
-        public List<Delivery>? SearchByPrice(double price)
-        {
-            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
-            {
-                return db.GetTable<Delivery>()
-                    .Where(p => p.Price == price)
-                    .ToList();
-            }
-        }
-
-        public int UpdateDelivey(int id, int order, DateTime deliveryDate, string address, bool status, double price)
+        public int UpdatePayment(int id, int order, double totalPrice, DateTime paymentDate, int paymentMethod)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {                
-                if (order != null)
+                if (SearchByOrder(order) != null)
                 {
-                    return db.GetTable<Delivery>()
+                    return db.GetTable<Payment>()
                         .Where(p => p.Id == id)
                         .Set(p => p.OrderId, order)
-                        .Set(p => p.DeliveryDate, deliveryDate)
-                        .Set(p => p.Address, address)
-                        .Set(p => p.Status, status)
-                        .Set(p => p.Price, price)
+                        .Set(p => p.TotalPrice, totalPrice)
+                        .Set(p => p.PaymentDate, paymentDate)
+                        .Set(p => p.PaymentMethod, paymentMethod)
                         .Update();
                 }
                 else
@@ -131,7 +116,7 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Delivery>()
+                return db.GetTable<Payment>()
                     .Where(c => c.Id == id)
                     .Delete();
             }
