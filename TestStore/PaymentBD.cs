@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TestStore
 {
-    public class PaymentDB
+    public class PaymentBD
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
@@ -37,7 +37,7 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<Payment>().LoadWith(request => request.customer).ToList();
+                return db.GetTable<Payment>().LoadWith(request => request.order).ToList();
             }
         }
 

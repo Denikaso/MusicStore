@@ -59,13 +59,13 @@ namespace TestStore
             }
         }
 
-        public Product? SearchBySubCategory(int subCategory)
+        public List<Product>? SearchBySubCategory(int subCategory)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Product>().LoadWith(request => request.Subcategory)
                     .Where(p => p.Subcategory.Id == subCategory)
-                    .FirstOrDefault();
+                    .ToList();
             }
         }
 
