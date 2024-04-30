@@ -15,5 +15,7 @@ namespace MusicStoreLibrary
         [Column("Email"), NotNull] public string Email { get; set; }
         [Column("PhoneNumber")] public string PhoneNumber { get; set; }
         [Column("Address")] public string Address { get; set; }
+        [Column("Password"), NotNull] public string Password { get; set; } 
+        [Column("role"), NotNull] public string Role { get; set; } 
     }
 }

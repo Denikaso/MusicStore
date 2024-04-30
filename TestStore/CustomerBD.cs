@@ -3,6 +3,7 @@ using LinqToDB.DataProvider.SqlServer;
 using System.Collections.Generic;
 using System.Linq;
 using MusicStoreLibrary;
+using System.Data;
 
 namespace TestStore
 {
@@ -10,7 +11,7 @@ namespace TestStore
     {
         private const string CONNECTION_STRING = @"Server=SHAMA;DataBase=MusicStore;Trusted_Connection=True;";
 
-        public int Create(string name, string email, string phoneNumber)
+        public int Create(string name, string email, string phoneNumber, string password, string role)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
@@ -18,6 +19,8 @@ namespace TestStore
                     .Value(c => c.Name, name)
                     .Value(c => c.Email, email)
                     .Value(c => c.PhoneNumber, phoneNumber)
+                    .Value(c => c.Password, password)
+                    .Value(c => c.Role, role)
                     .Insert();
             }
         }
@@ -68,7 +71,7 @@ namespace TestStore
             }
         }
 
-        public int UpdateCustomer(int id, string name, string email, string phoneNumber)
+        public int UpdateCustomer(int id, string name, string email, string phoneNumber, string password, string role)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
@@ -77,6 +80,8 @@ namespace TestStore
                     .Set(c => c.Name, name)
                     .Set(c => c.Email, email)
                     .Set(c => c.PhoneNumber, phoneNumber)
+                    .Set(c => c.Password, password)
+                    .Set(c => c.Role, role)
                     .Update();
             }
         }
