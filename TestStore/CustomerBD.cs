@@ -86,6 +86,17 @@ namespace TestStore
             }
         }
 
+        public void UpdateCustomerPassword(int id, string password)
+        {
+            using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
+            {
+                db.GetTable<Customer>()
+                    .Where(c => c.Id == id)
+                    .Set(c => c.Password, password)
+                    .Update();
+            }
+        }
+
         public int Delete(int id)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
