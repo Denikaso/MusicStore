@@ -51,12 +51,12 @@ namespace TestStore
             }
         }
 
-        public List<Order>? SearchByCustomer(string customer)
+        public List<Order>? SearchByCustomer(int customer)
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
                 return db.GetTable<Order>().LoadWith(request => request.customer)
-                    .Where(p => p.customer.Name == customer)
+                    .Where(p => p.customer.Id == customer)
                     .ToList();
             }
         }
