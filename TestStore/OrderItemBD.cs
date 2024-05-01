@@ -57,7 +57,7 @@ namespace TestStore
         {
             using (var db = SqlServerTools.CreateDataConnection(CONNECTION_STRING))
             {
-                return db.GetTable<OrderItem>()
+                return db.GetTable<OrderItem>().LoadWith(request => request.order)
                     .Where(p => p.OrderId == order)
                     .ToList();
             }
